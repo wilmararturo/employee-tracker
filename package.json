@@ -2,7 +2,7 @@
   "name": "employee-tracker",
   "version": "1.0.0",
   "description": "![](https://img.shields.io/badge/license-MIT%20License-blue)",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/wilmararturo/employee-tracker#readme",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "inquirer": "^7.3.3",
     "mysql": "^2.18.1"
   }
