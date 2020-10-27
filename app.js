@@ -23,6 +23,10 @@ const greeting = async () => {
                 "View all employees",
                 "View all roles",
                 "View all departments",
+                "Add employee",
+                "Add role",
+                "Add department",
+                "Update employee role",
                 "Quit"
             ]
         })
@@ -41,6 +45,16 @@ const greeting = async () => {
                     employeeDB.getTableData("department", greeting);
 
                     break;
+
+                case "Add employee":
+                    break;
+
+                case "Add role":
+                    break;
+                case "Add department":
+                    break;
+                case "Update employee role":
+                    break;
                 case "Quit":
                     employeeDB.close();
                     break;
@@ -53,6 +67,45 @@ const greeting = async () => {
         })
 }
 
+const addEmployee = () => {
+    inquirer
+        .prompt([
+            {
+                name: "employeeFirstName",
+                type: "input",
+                message: "Enter the first name of the employee:",
+            },
+            {
+                name: "employeeLastName",
+                type: "input",
+                message: "Enter the last name of the employee:",
+            }
+        ])
+        .then(console.log(answer))
+
+}
+
+const addRole = () => {
+    inquirer
+        .prompt({
+            name: "newDe",
+            type: "input",
+            message: "Enter the name of the new role:",
+        })
+        .then(console.log(answer))
+
+}
+
+const addRole = () => {
+    inquirer
+        .prompt({
+            name: "newRole",
+            type: "input",
+            message: "Enter the name of the new role:",
+        })
+        .then(console.log(answer))
+
+}
 const init = () => {
     greeting();
 }
