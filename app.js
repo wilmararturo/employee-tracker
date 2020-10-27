@@ -1,7 +1,7 @@
 const inquirer = require("inquirer");
 const mysql = require('mysql');
 const db = require("./lib/db")
-//const employeeDB = require("./lib/employeeDB");
+const employeeDB = require("./lib/employeeDB");
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -13,7 +13,7 @@ db.connect((err) => {
 })
 
 
-const greeting = () => {
+const greeting = async () => {
     inquirer
         .prompt({
             name: "activity",
@@ -29,20 +29,23 @@ const greeting = () => {
         .then((answer) => {
             switch (answer.activity) {
                 case "View all employees":
-                    getEmployees();
+                    employeeDB.getTableData("employee", greeting);
+
                     break;
 
                 case "View all roles":
-                    getRoles();
+                    employeeDB.getTableData("role", greeting);
+
                     break;
                 case "View all departments":
-                    getDepartments();
+                    employeeDB.getTableData("department", greeting);
+
                     break;
                 case "Quit":
-                    connection.end();
+                    employeeDB.close();
                     break;
                 default:
-                    connection.end();
+                    employeeDB.close();
                     console.log("Bye!")
                     break;
 
@@ -52,31 +55,6 @@ const greeting = () => {
 
 const init = () => {
     greeting();
-}
-
-const getEmployees = () => {
-    db.query("SELECT * FROM employee", (err, res) => {
-        if (err) throw err;
-        console.table(res);
-        greeting();
-
-    });
-
-
-}
-const getDepartments = () => {
-    db.query("SELECT * FROM department", (err, res) => {
-        if (err) throw err;
-        console.table(res);
-        greeting();
-    });
-}
-const getRoles = () => {
-    db.query("SELECT * FROM role", (err, res) => {
-        if (err) throw err;
-        console.table(res);
-        greeting();
-    });
 }
 
 
