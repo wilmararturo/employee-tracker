@@ -1,22 +1,15 @@
 const inquirer = require("inquirer");
 const mysql = require('mysql');
-//const db = require("./lib/db")
+const db = require("./lib/db")
 //const employeeDB = require("./lib/employeeDB");
 const dotenv = require('dotenv');
 
 dotenv.config();
 
-const connection = mysql.createConnection({
-    host: "localhost",
-    port: 3306,
-    user: "root",
-    password: process.env.MYSQL_PASSWORD || '',
-    database: 'employee_db'
-})
 
-connection.connect((err) => {
+db.connect((err) => {
     if (err) throw err;
-    greeting();
+    init();
 })
 
 
@@ -62,7 +55,7 @@ const init = () => {
 }
 
 const getEmployees = () => {
-    connection.query("SELECT * FROM employee", (err, res) => {
+    db.query("SELECT * FROM employee", (err, res) => {
         if (err) throw err;
         console.table(res);
         greeting();
@@ -72,14 +65,14 @@ const getEmployees = () => {
 
 }
 const getDepartments = () => {
-    connection.query("SELECT * FROM department", (err, res) => {
+    db.query("SELECT * FROM department", (err, res) => {
         if (err) throw err;
         console.table(res);
         greeting();
     });
 }
 const getRoles = () => {
-    connection.query("SELECT * FROM role", (err, res) => {
+    db.query("SELECT * FROM role", (err, res) => {
         if (err) throw err;
         console.table(res);
         greeting();
