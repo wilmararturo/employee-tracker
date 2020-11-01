@@ -137,11 +137,11 @@ const addRoleToEmployee = (employeeObj) => {
             ])
             .then((answer) => {
                 newEmployee.role = answer.employeeRole;
+                greeting();
 
             })
 
     })
-
 
 }
 
@@ -167,35 +167,49 @@ const getRoleByDepartmentId = (departmentId, cb) => {
 }
 
 const addRole = () => {
-    inquirer
-        .prompt([{
-            name: "roleTitle",
-            type: "input",
-            message: "Enter the title of the new role:",
-        }, {
-            name: "roleSalary",
-            type: "input",
-            message: "Salary for the new role (numbers only)",
-            validate: function (value) {
-                if (isNaN(value) === false) {
-                    return true;
-                }
-                return false;
+    const departmentChoices = [];
+    const query = "SELECT id,name FROM department";
+    db.query(query, (err, res) => {
+        if (err) throw err;
+        for (let i = 0; i < res.length; i++) {
+            const departmentChoice = {
+                value: res[i].id,
+                name: res[i].name,
             }
-        },
-        {
-            name: "roleDepartment",
-            type: "rawlist",
-            message: "Select a department for the new role",
+            departmentChoices.push(departmentChoice);
         }
 
-        ]
+        inquirer
+            .prompt([{
+                name: "roleTitle",
+                type: "input",
+                message: "Enter the title of the new role:",
+            }, {
+                name: "roleSalary",
+                type: "input",
+                message: "Salary for the new role (numbers only)",
+                validate: function (value) {
+                    if (isNaN(value) === false) {
+                        return true;
+                    }
+                    return false;
+                }
+            },
+            {
+                name: "roleDepartment",
+                type: "list",
+                message: "Select a department for the new role",
+                choices: departmentChoices
+            }
 
-        )
-        .then((answer) => {
-            console.log(answer);
-            greeting();
-        });
+            ]
+
+            )
+            .then((answer) => {
+                console.log(answer);
+                greeting();
+            });
+    })
 
 }
 
