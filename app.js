@@ -36,7 +36,7 @@ const greeting = async () => {
         .then((answer) => {
             switch (answer.activity) {
                 case "View all employees":
-                    getAllEmployeeData((result) => {
+                    employeeDB.getAllEmployeeData((result) => {
                         console.table(result);
                         greeting();
                     })
@@ -44,14 +44,14 @@ const greeting = async () => {
                     break;
 
                 case "View all roles":
-                    getAllRoles((result) => {
+                    employeeDB.getAllRoles((result) => {
                         console.table(result);
                         greeting();
                     });
 
                     break;
                 case "View all departments":
-                    getAllDepartments((result) => {
+                    employeeDB.getAllDepartments((result) => {
                         console.table(result);
                         greeting();
                     });
@@ -169,7 +169,7 @@ const addManagerToEmployee = (employeeObj) => {
             ])
             .then((answer) => {
                 newEmployee.manager = answer.managerId;
-                createEmployee(newEmployee, (result) => {
+                employeeDB.createEmployee(newEmployee, (result) => {
                     return result;
 
                 });
@@ -207,7 +207,7 @@ const changeEmployeeRole = () => {
                             roleId = answer.role;
                         })
                         .then(() => {
-                            updateEmployeeRole(employeeId, roleId, (result) => {
+                            employeeDB.updateEmployeeRole(employeeId, roleId, (result) => {
                                 return result;
                             })
 
@@ -313,7 +313,7 @@ const addRole = () => {
 
             )
             .then((answer) => {
-                createRole(answer, (result) => {
+                employeeDB.createRole(answer, (result) => {
                     return result;
                 });
                 greeting();
@@ -330,7 +330,7 @@ const addDepartment = () => {
             message: "Enter the name of the new department:",
         })
         .then((answer) => {
-            createDepartment(answer.departmentName, (result) => {
+            employeeDB.createDepartment(answer.departmentName, (result) => {
                 return result;
             });
         })
