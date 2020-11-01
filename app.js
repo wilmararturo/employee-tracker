@@ -1,13 +1,9 @@
 const inquirer = require("inquirer");
-// const mysql = require('mysql');
 const db = require("./lib/db")
 const employeeDB = require("./lib/employeeDB");
 const dotenv = require('dotenv');
-// const { connect } = require("./lib/db");
-// const connection = require("./lib/db");
 
 dotenv.config();
-
 
 db.connect((err) => {
     if (err) throw err;
@@ -133,7 +129,7 @@ const addEmployee = () => {
 
 const addRoleToEmployee = (employeeObj) => {
 
-    getRoleByDepartmentId(employeeObj.department, (result) => {
+    employeeDB.getRoleByDepartmentId(employeeObj.department, (result) => {
         inquirer
             .prompt([
 
@@ -147,7 +143,6 @@ const addRoleToEmployee = (employeeObj) => {
             ])
             .then((answer) => {
                 newEmployee.role = answer.employeeRole;
-                console.log(newEmployee);
                 addManagerToEmployee(newEmployee);
 
             })
@@ -157,7 +152,7 @@ const addRoleToEmployee = (employeeObj) => {
 }
 
 const addManagerToEmployee = (employeeObj) => {
-    getEmployeeChoiceList((result) => {
+    employeeDB.getEmployeeChoiceList((result) => {
         inquirer
             .prompt([
                 {
@@ -181,7 +176,7 @@ const addManagerToEmployee = (employeeObj) => {
 const changeEmployeeRole = () => {
     let employeeId = "";
     let roleId = "";
-    getEmployeeChoiceList((result) => {
+    employeeDB.getEmployeeChoiceList((result) => {
         inquirer
             .prompt([
                 {
@@ -193,7 +188,7 @@ const changeEmployeeRole = () => {
             ])
             .then((answer) => {
                 employeeId = answer.employee;
-                getRoleChoiceList((result) => {
+                employeeDB.getRoleChoiceList((result) => {
                     inquirer
                         .prompt([
                             {
@@ -217,59 +212,6 @@ const changeEmployeeRole = () => {
                         })
                 })
             })
-    })
-}
-
-const getRoleByDepartmentId = (departmentId, cb) => {
-    const query = "SELECT id,title FROM role WHERE department_id=?"
-    const roleChoices = []
-    db.query(query, [departmentId], (err, res) => {
-        if (err) throw err;
-        for (let i = 0; i < res.length; i++) {
-            const roleChoice = {
-                value: res[i].id,
-                name: res[i].title,
-            }
-            roleChoices.push(roleChoice);
-
-
-        }
-
-        return cb(roleChoices);
-    })
-}
-
-const getEmployeeChoiceList = (cb) => {
-    const query = "SELECT id,first_name,last_name FROM employee";
-    const employeeChoices = [];
-    db.query(query, (err, res) => {
-        if (err) throw err;
-        for (let i = 0; i < res.length; i++) {
-            const employeeChoice = {
-                value: res[i].id,
-                name: `${res[i].first_name} ${res[i].last_name}`
-            }
-            employeeChoices.push(employeeChoice);
-        }
-        return cb(employeeChoices);
-
-    })
-}
-
-const getRoleChoiceList = (cb) => {
-    const query = "SELECT id,title FROM role";
-    const roleChoices = [];
-    db.query(query, (err, res) => {
-        if (err) throw err;
-        for (let i = 0; i < res.length; i++) {
-            const roleChoice = {
-                value: res[i].id,
-                name: res[i].title,
-            }
-            roleChoices.push(roleChoice);
-        }
-        return cb(roleChoices);
-
     })
 }
 
