@@ -1,4 +1,5 @@
 const inquirer = require("inquirer");
+const figlet = require("figlet");
 const db = require("./lib/db")
 const employeeDB = require("./lib/employeeDB");
 const dotenv = require('dotenv');
@@ -11,6 +12,23 @@ db.connect((err) => {
 })
 
 let newEmployee = {};
+
+const renderTitle = () => {
+    const titleText = "Employee Tracker X";
+    const titleConfig = {
+        font: "Marquee",
+        horizontalLayout: "fitted",
+        verticalLayout: "full",
+        width: 80,
+        whitespaceBreack: true,
+
+    }
+    figlet(titleText, titleConfig, (err, data) => {
+        if (err) throw err;
+        console.log(`${data}\n ${titleText}`);
+        greeting();
+    });
+}
 
 const greeting = async () => {
     inquirer
@@ -283,7 +301,8 @@ const addDepartment = () => {
 }
 
 const init = () => {
-    greeting();
+    renderTitle();
+
 }
 
 
