@@ -70,7 +70,7 @@ const greeting = async () => {
                     break;
 
                 case "Update employee role":
-                    updateEmployeeRole();
+                    changeEmployeeRole();
                     break;
                 case "Quit":
                     db.end();
@@ -147,7 +147,8 @@ const addRoleToEmployee = (employeeObj) => {
             ])
             .then((answer) => {
                 newEmployee.role = answer.employeeRole;
-                greeting();
+                console.log(newEmployee);
+                addManagerToEmployee(newEmployee);
 
             })
 
@@ -155,7 +156,29 @@ const addRoleToEmployee = (employeeObj) => {
 
 }
 
-const updateEmployeeRole = () => {
+const addManagerToEmployee = (employeeObj) => {
+    getEmployeeChoiceList((result) => {
+        inquirer
+            .prompt([
+                {
+                    name: "managerId",
+                    type: "list",
+                    message: "Select a manager",
+                    choices: result,
+                }
+            ])
+            .then((answer) => {
+                newEmployee.manager = answer.managerId;
+                createEmployee(newEmployee, (result) => {
+                    return result;
+
+                });
+                greeting();
+            })
+    })
+}
+
+const changeEmployeeRole = () => {
     let employeeId = "";
     let roleId = "";
     getEmployeeChoiceList((result) => {
@@ -184,8 +207,10 @@ const updateEmployeeRole = () => {
                             roleId = answer.role;
                         })
                         .then(() => {
-                            console.log(employeeId);
-                            console.log(roleId);
+                            updateEmployeeRole(employeeId, roleId, (result) => {
+                                return result;
+                            })
+
                         })
                         .then(() => {
                             greeting();
@@ -288,7 +313,9 @@ const addRole = () => {
 
             )
             .then((answer) => {
-                console.log(answer);
+                createRole(answer, (result) => {
+                    return result;
+                });
                 greeting();
             });
     })
@@ -303,7 +330,9 @@ const addDepartment = () => {
             message: "Enter the name of the new department:",
         })
         .then((answer) => {
-            console.log(answer);
+            createDepartment(answer.departmentName, (result) => {
+                return result;
+            });
         })
         .then(() => {
             greeting();
@@ -313,7 +342,7 @@ const addDepartment = () => {
 
 const getAllEmployeeData = (cb) => {
     let query = `SELECT employee.id,employee.first_name,employee.last_name,role.title,role.salary,department.name, `
-    query += `(SELECT CONCAT(employee.first_name, " ", employee.last_name) FROM employee WHERE employee.manager_id = employee.id) as Manager `
+    query += `(SELECT CONCAT(employee.first_name, " ", employee.last_name) FROM employee emp WHERE employee.manager_id = emp.id) as Manager `
     query += `FROM employee `
     query += `JOIN role on employee.role_id = role.id `
     query += `JOIN department on role.department_id = department.id; `
@@ -339,6 +368,46 @@ const getAllDepartments = (cb) => {
     })
 }
 
+const createEmployee = (employeeObj, cb) => {
+    const { first_name, last_name, role, manager } = employeeObj;
+    let query = "INSERT INTO employee (first_name, last_name, role_id, manager_id) ";
+    query += "VALUES (?,?,?,?);";
+    db.query(query, [first_name, last_name, role, manager], (err, res) => {
+        if (err) throw err;
+        return cb(res);
+    })
+
+}
+
+const createRole = (roleObj, cb) => {
+    const { roleTitle, roleSalary, roleDepartment } = roleObj;
+    let query = "INSERT INTO role (title,salary,department_id) ";
+    query += "VALUES (?,?,?)";
+    db.query(query, [roleTitle, roleSalary, roleDepartment], (err, res) => {
+        if (err) throw err;
+        return cb(res);
+    })
+}
+
+const createDepartment = (departmentName, cb) => {
+    let query = "INSERT INTO department (name) ";
+    query += "VALUES (?)";
+    db.query(query, [departmentName], (err, res) => {
+        if (err) throw err;
+        return cb(res);
+    })
+}
+
+const updateEmployeeRole = (employeeId, roleId, cb) => {
+    let query = "UPDATE employee ";
+    query += "SET role_id=? ";
+    query += "WHERE id=?;";
+    db.query(query, [roleId, employeeId], (err, res) => {
+        if (err) throw err;
+        return cb(res);
+    })
+
+}
 const init = () => {
     greeting();
 }
