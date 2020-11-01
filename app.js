@@ -1,10 +1,10 @@
 const inquirer = require("inquirer");
-const mysql = require('mysql');
+// const mysql = require('mysql');
 const db = require("./lib/db")
 const employeeDB = require("./lib/employeeDB");
 const dotenv = require('dotenv');
-const { connect } = require("./lib/db");
-const connection = require("./lib/db");
+// const { connect } = require("./lib/db");
+// const connection = require("./lib/db");
 
 dotenv.config();
 
@@ -36,16 +36,25 @@ const greeting = async () => {
         .then((answer) => {
             switch (answer.activity) {
                 case "View all employees":
-                    employeeDB.getTableData("employee", greeting);
+                    getAllEmployeeData((result) => {
+                        console.table(result);
+                        greeting();
+                    })
 
                     break;
 
                 case "View all roles":
-                    employeeDB.getTableData("role", greeting);
+                    getAllRoles((result) => {
+                        console.table(result);
+                        greeting();
+                    });
 
                     break;
                 case "View all departments":
-                    employeeDB.getTableData("department", greeting);
+                    getAllDepartments((result) => {
+                        console.table(result);
+                        greeting();
+                    });
 
                     break;
 
@@ -61,12 +70,13 @@ const greeting = async () => {
                     break;
 
                 case "Update employee role":
+                    updateEmployeeRole();
                     break;
                 case "Quit":
-                    employeeDB.close();
+                    db.end();
                     break;
                 default:
-                    employeeDB.close();
+                    db.end();
                     console.log("Bye!")
                     break;
 
@@ -145,6 +155,46 @@ const addRoleToEmployee = (employeeObj) => {
 
 }
 
+const updateEmployeeRole = () => {
+    let employeeId = "";
+    let roleId = "";
+    getEmployeeChoiceList((result) => {
+        inquirer
+            .prompt([
+                {
+                    name: "employee",
+                    type: "list",
+                    message: "Select an employee to update the employee's role",
+                    choices: result,
+                }
+            ])
+            .then((answer) => {
+                employeeId = answer.employee;
+                getRoleChoiceList((result) => {
+                    inquirer
+                        .prompt([
+                            {
+                                name: "role",
+                                type: "list",
+                                message: "Select a Role",
+                                choices: result,
+                            }
+                        ])
+                        .then((answer) => {
+                            roleId = answer.role;
+                        })
+                        .then(() => {
+                            console.log(employeeId);
+                            console.log(roleId);
+                        })
+                        .then(() => {
+                            greeting();
+                        })
+                })
+            })
+    })
+}
+
 const getRoleByDepartmentId = (departmentId, cb) => {
     const query = "SELECT id,title FROM role WHERE department_id=?"
     const roleChoices = []
@@ -162,8 +212,40 @@ const getRoleByDepartmentId = (departmentId, cb) => {
 
         return cb(roleChoices);
     })
+}
 
+const getEmployeeChoiceList = (cb) => {
+    const query = "SELECT id,first_name,last_name FROM employee";
+    const employeeChoices = [];
+    db.query(query, (err, res) => {
+        if (err) throw err;
+        for (let i = 0; i < res.length; i++) {
+            const employeeChoice = {
+                value: res[i].id,
+                name: `${res[i].first_name} ${res[i].last_name}`
+            }
+            employeeChoices.push(employeeChoice);
+        }
+        return cb(employeeChoices);
 
+    })
+}
+
+const getRoleChoiceList = (cb) => {
+    const query = "SELECT id,title FROM role";
+    const roleChoices = [];
+    db.query(query, (err, res) => {
+        if (err) throw err;
+        for (let i = 0; i < res.length; i++) {
+            const roleChoice = {
+                value: res[i].id,
+                name: res[i].title,
+            }
+            roleChoices.push(roleChoice);
+        }
+        return cb(roleChoices);
+
+    })
 }
 
 const addRole = () => {
@@ -216,16 +298,47 @@ const addRole = () => {
 const addDepartment = () => {
     inquirer
         .prompt({
-            name: "newDepartment",
+            name: "departmentName",
             type: "input",
             message: "Enter the name of the new department:",
         })
         .then((answer) => {
             console.log(answer);
+        })
+        .then(() => {
             greeting();
         });
 
 }
+
+const getAllEmployeeData = (cb) => {
+    let query = `SELECT employee.id,employee.first_name,employee.last_name,role.title,role.salary,department.name, `
+    query += `(SELECT CONCAT(employee.first_name, " ", employee.last_name) FROM employee WHERE employee.manager_id = employee.id) as Manager `
+    query += `FROM employee `
+    query += `JOIN role on employee.role_id = role.id `
+    query += `JOIN department on role.department_id = department.id; `
+    db.query(query, (err, res) => {
+        if (err) throw err;
+        return cb(res)
+    })
+}
+
+const getAllRoles = (cb) => {
+    const query = "SELECT role.id,role.title,role.salary,department.name AS Department FROM role JOIN department ON role.department_id = department.id";
+    db.query(query, (err, res) => {
+        if (err) throw err;
+        return cb(res);
+    })
+}
+
+const getAllDepartments = (cb) => {
+    const query = "SELECT id,name FROM department";
+    db.query(query, (err, res) => {
+        if (err) throw err;
+        return cb(res);
+    })
+}
+
 const init = () => {
     greeting();
 }
