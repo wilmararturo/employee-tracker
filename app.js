@@ -14,9 +14,9 @@ db.connect((err) => {
 let newEmployee = {};
 
 const renderTitle = () => {
-    const titleText = "Employee Tracker X";
+    const titleText = "Employee\n Tracker X";
     const titleConfig = {
-        font: "Marquee",
+        font: "Doom",
         horizontalLayout: "fitted",
         verticalLayout: "full",
         width: 80,
@@ -45,7 +45,8 @@ const greeting = async () => {
                 "Add department",
                 "Update employee role",
                 "Quit"
-            ]
+            ],
+            default: "Quit"
         })
         .then((answer) => {
             switch (answer.activity) {
