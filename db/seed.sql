@@ -1,4 +1,6 @@
 -- Sample data
+-- Use the DB
+USE employee_db;
 -- Departments
 INSERT INTO department (name)
 VALUES("Finance"),
@@ -87,7 +89,7 @@ VALUES(
         (
             SELECT id
             FROM department
-            WHERE name = 'Operations'
+            WHERE name = 'Facilities'
         )
     ),
     (
@@ -125,6 +127,24 @@ VALUES(
             FROM department
             WHERE name = 'Technology'
         )
+    ),
+    (
+        "VP of Operations",
+        300000,
+        (
+            SELECT id
+            FROM department
+            WHERE name = 'Operations'
+        )
+    ),
+    (
+        "Operations Manager",
+        500000,
+        (
+            SELECT id
+            FROM department
+            WHERE name = 'Operations'
+        )
     );
 -- Employees with role and manager
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
@@ -156,7 +176,7 @@ VALUES (
             FROM role
             WHERE title = 'Facilities Manager'
         ),
-        1
+        15
     ),
     (
         "Robert",
@@ -166,7 +186,7 @@ VALUES (
             FROM role
             WHERE title = 'Financial Analyst'
         ),
-        1
+        2
     ),
     (
         "Henry",
@@ -186,7 +206,7 @@ VALUES (
             FROM role
             WHERE title = 'Head of Marketing'
         ),
-        1
+        6
     ),
     (
         "Jean",
@@ -206,7 +226,7 @@ VALUES (
             FROM role
             WHERE title = 'Marketing Associate'
         ),
-        1
+        6
     ),
     (
         "Kurt",
@@ -216,7 +236,7 @@ VALUES (
             FROM role
             WHERE title = 'Developer'
         ),
-        1
+        12
     ),
     (
         "James",
@@ -226,7 +246,7 @@ VALUES (
             FROM role
             WHERE title = 'Developer'
         ),
-        1
+        13
     ),
     (
         "Ororo",
@@ -236,7 +256,7 @@ VALUES (
             FROM role
             WHERE title = 'VP of Engineering'
         ),
-        1
+        5
     ),
     (
         "Piotr",
@@ -246,7 +266,7 @@ VALUES (
             FROM role
             WHERE title = 'Lead Developer'
         ),
-        1
+        11
     ),
     (
         "Katherine",
@@ -256,7 +276,7 @@ VALUES (
             FROM role
             WHERE title = 'Lead Developer'
         ),
-        1
+        11
     ),
     (
         "Max",
@@ -266,7 +286,7 @@ VALUES (
             FROM role
             WHERE title = 'Marketing Associate'
         ),
-        1
+        6
     ),
     (
         "Anna",
@@ -276,7 +296,7 @@ VALUES (
             FROM role
             WHERE title = 'Facilities Manager'
         ),
-        1
+        2
     ),
     (
         "Remy",
@@ -286,7 +306,7 @@ VALUES (
             FROM role
             WHERE title = 'Business Analyst'
         ),
-        1
+        7
     ),
     (
         "Nathan",
@@ -296,7 +316,7 @@ VALUES (
             FROM role
             WHERE title = 'Marketing Associate'
         ),
-        1
+        14
     ),
     (
         "Raven",
@@ -306,7 +326,7 @@ VALUES (
             FROM role
             WHERE title = 'Developer'
         ),
-        1
+        11
     ),
     (
         "Elizabeth",
@@ -316,7 +336,7 @@ VALUES (
             FROM role
             WHERE title = 'Business Analyst'
         ),
-        1
+        16
     ),
     (
         "David",
@@ -326,7 +346,7 @@ VALUES (
             FROM role
             WHERE title = 'Data Scientist'
         ),
-        1
+        5
     ),
     (
         "Wade",
@@ -336,5 +356,5 @@ VALUES (
             FROM role
             WHERE title = 'Developer'
         ),
-        1
+        10
     );
