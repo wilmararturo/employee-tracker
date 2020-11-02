@@ -24,20 +24,43 @@ Employee tracker
     ```
     git@github.com:wilmararturo/employee-tracker.git
     ```
+1. Update mysql by adding the `./db/schema.sql`
+1. (Optional) Add seed data from `./db/seed.sql`
+1. Copy `sample.env` to `.env` and update with your MySQL Password. 
 1. Run the app.
     ```
-    node server
+    node app
     ```
 
 ## Usage
 
 ---
 
-1. Start the server
-  ```
-  node server.js
-  ```
-1. Do all the things
+![employe_tracker_x](employee_tracker_x.png)
+
+1. Make sure MySQL running and listening on `3306/tcp`
+
+    * The `employee_db` database must be created with the provided schema.
+
+1. Start the server 
+
+    ```
+      node app
+    ```
+
+1. Follow the test based questions to perform tasks
+
+1. Available tasks:
+
+    * Add departments, roles, employees
+
+    * View departments, roles, employees
+
+    * Update employee roles
+
+1. Quit to end the database connection
+ 
+
 
 ## Tests
 
